@@ -66,9 +66,9 @@ If Lastkey()=13
               case pozicion=3
                    tmesto()
               case pozicion=4
-*                   if gnAdm=1
+ //                   if gnAdm=1
                       s_kln()  //Справочник
-*                   endif
+ //                   endif
               case pozicion=5
                    kps()
               case pozicion=6

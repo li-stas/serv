@@ -1,3 +1,6 @@
+#include "common.ch"
+#include "inkey.ch"
+
 clea
 netuse('kobl')
 netuse('kfs')
@@ -31,7 +34,7 @@ do while .t.
    kklpr:=kklp
    nklpr:=getfield('t1','kklpr','kln','nkl')
    nklr=upper(nkl)
-   nklr=alltrim(nklr) 
+   nklr=alltrim(nklr)
    nkler=upper(nkle)
    nklsr=lower(nkls)
    adrr=adr
@@ -62,24 +65,26 @@ do while .t.
    nulcr=getfield('t1','kulcr','kulc','nulc')
    krnr=krn
    nrnr=getfield('t1','krnr','krn','nrn')
+   EMailr=EMail
+
    do case
-      case lastkey()=19 && Left
+      case lastkey()=K_LEFT && Left
            fldnomr=fldnomr-1
            if fldnomr=0
               fldnomr=1
            endif
-      case lastkey()=4 && Right
+      case lastkey()=K_RIGHT && Right
            fldnomr=fldnomr+1
       case lastkey()=22.and.gnArm#4 .and. (dkklnr=1.or.gnadm=1) && INS
-           klnins()
+           KlnIns()
       case lastkey()=7.and.gnAdm=1  && DEL
            netdel()
            skip -1
            if bof()
-              go top 
-           endif 
-           rckklr=recn()   
-      case lastkey()=-2 && F3
+              go top
+           endif
+           rckklr=recn()
+      case lastkey()=K_F3 && F3
            clkln=setcolor('gr+/b,n/w')
            wkln=wopen(7,20,17,60)
            wbox(1)
@@ -94,13 +99,13 @@ do while .t.
            @ 5,1 say 'Код район' get krnr pict '9999' valid vkrn(wkln)
            @ 6,1 say 'Код город' get knaspr pict '9999' valid vknasp(wkln)
            @ 7,1 say 'Плат/ГрП ' get plgpr pict '9'
-           @ 8,1 say 'Все 0; Плат 1; ГрП 2' 
+           @ 8,1 say 'Все 0; Плат 1; ГрП 2'
            read
            if kklr#0.or.kkl1r#0.or.!empty(rschr)
               forr=for_r
               do case
                  case kklr#0
-                      sele kln  
+                      sele kln
                       set orde to tag t1
                       if !netseek('t1','kklr')
                          go top
@@ -120,31 +125,31 @@ do while .t.
                       go top
                       rckklr=recn()
                       forr=for_r+'.and.at(rschr,kln->kb1)#0'
-              endc         
-           else 
-              forr=for_r   
+              endc
+           else
+              forr=for_r
               if !empty(ktxr)
                  ktxr=alltrim(upper(ktxr))
                  forr=forr+'.and.at(ktxr,upper(kln->nkl))#0'
-              endif   
+              endif
               if !empty(ktx1r)
                  ktx1r=alltrim(upper(ktx1r))
                  forr=forr+'.and.at(ktx1r,upper(kln->adr))#0'
-              endif   
+              endif
               if !empty(krnr)
                  forr=forr+'.and.krn=krnr'
-              endif   
+              endif
               if !empty(knaspr)
                  forr=forr+'.and.knasp=knaspr'
-              endif   
-              do case  
+              endif
+              do case
                  case plgpr=0
                       forr=forr
                  case plgpr=1
                       forr=forr+'.and.kkl1#0'
                  case plgpr=2
                       forr=forr+'.and.kkl1=0'
-              endc   
+              endc
               sele kln
               set orde to tag t1
               go top
@@ -155,47 +160,47 @@ do while .t.
               forr=for_r
               go top
               rckklr=recn()
-           endif   
+           endif
            wclose(wkln)
            setcolor(clkln)
-      case lastkey()=-3  &&.and. (dkklnr=1.or.gnadm=1) && F4
-           klnins(1)
-      case lastkey()=27 
+      case lastkey()=K_F4 &&.and. (dkklnr=1.or.gnadm=1) && F4
+           KlnIns(1)
+      case lastkey()=K_ESC
            exit
       case lastkey()=-6 && Двойники
            save scre to sckldv
-           clea  
+           clea
            sele kln
-           set filt to  
-           set orde to tag t1  
+           set filt to
+           set orde to tag t1
            go top
            kklr=9999999999
            do while !eof()
               if kkl=kklr
-                 ?str(kkl,7) 
+                 ?str(kkl,7)
                  netdel()
-                 skip  
-                 loop   
+                 skip
+                 loop
               endif
-              kklr=kkl   
+              kklr=kkl
               sele kln
               skip
-           endd       
-           rest scre from sckldv         
+           endd
+           rest scre from sckldv
            go top
            kklr=kkl
    endc
 enddo
 nuse()
 
-func klnins(p1)
+func KlnIns(p1)
 if empty(p1)
-   corr=0 
+   corr=0
 else
-   corr=1 
+   corr=1
 endif
-save scre to scklnins
-clklnins=setcolor('gr+/b,n/w')
+save scre to scKlnIns
+clKlnIns=setcolor('gr+/b,n/w')
 clea
 @ 0,0,MAXROW(),MAXCOL() box frame
 
@@ -207,7 +212,7 @@ if corr=1
    kklpr:=kklp
    nklpr:=getfield('t1','kklpr','kln','nkl')
    nklr=upper(nkl)
-   nklr=alltrim(nklr) 
+   nklr=alltrim(nklr)
    nkler=upper(nkle)
    nklsr=lower(nkls)
    adrr=adr
@@ -238,7 +243,14 @@ if corr=1
    nulcr=getfield('t1','kulcr','kulc','nulc')
    krnr=krn
    nrnr=getfield('t1','krnr','krn','nrn')
+   EMailr=EMail
 else
+   sele kln
+   DBGoBottom()
+   DBSkip(1)
+
+   EMailr=EMail
+
    store 0 to kklpr,kklr,kkl1r,nnr,rstr,kobr,kfsr,opfhr,knaspr,kgosr,kulcr,krnr,;
               koblr,skidr,vmrshr,prir,kgpcatr
    store space(30) to nmfo1r,nmfo2r,nopfhr,klnnpvr
@@ -250,103 +262,110 @@ else
    store space(10) to nklsr,tlfr,nsopfhr
    kb1r=space(15)
    kb2r=space(15)
+
 endif
 
 do while .t.
    @ 1,1 say 'Код 7 знаков'
    @ 3,26 say nklpr
    if corr=0
-      @ 1,14 get kklr pict '9999999' valid kkl() 
+      @ 1,14 get kklr pict '9999999' valid kkl()
    else
       @ 1,14 say ' '+str(kklr,7)
    endif
    @ 1,16+8 say nklr
    if corr=1
-      if dkklnr=1.or.gnAdm=1  
-         @ 2,1  SAY 'Код плательщика' get kklpr pict '9999999' valid kkl_p() 
+      if dkklnr=1.or.gnAdm=1
+         @ 2,1  SAY 'Код плательщика' get kklpr pict '9999999' valid kkl_p()
       else
-         @ 2,1  SAY 'Код плательщика'+' '+str(kklpr,7) 
+         @ 2,1  SAY 'Код плательщика'+' '+str(kklpr,7)
       endif
    else
-      @ 2,1  SAY 'Код плательщика' get kklpr pict '9999999' 
+      @ 2,1  SAY 'Код плательщика' get kklpr pict '9999999'
    endif
    if gnArm=3.or.gnAdm=1
       @ 3,1  say 'Код ОКП     '
-      @ 3,14 get kkl1r pict '9999999999'  
+      @ 3,14 get kkl1r pict '9999999999'
    else
       @ 3,1  say 'Код ОКП     '+' '+str(kkl1r,10)
    endif
 
-   if dkklnr=1.or.gnAdm=1  
-      @ 4,1  say 'Наим' get nkler 
-      @ 5,1  say 'Наим.коротк.' get nklsr 
-      @ 5, 12+20  say 'Телефон     ' get tlfr  
-      @ 6,1  say 'Адрес       ' get adrr  
+   if dkklnr=1.or.gnAdm=1
+      @ 4,1  say 'Наим' get nkler
+      @ 5,1  say 'Наим.коротк.' get nklsr
+      @ 5, 12+20  say 'Телефон     ' get tlfr
+      @ 6,1  say 'Адрес       ' get adrr
    else
-      @ 4,1  say 'Наим'+' '+nkler 
-      @ 5,1  say 'Наим.коротк.'+' '+nklsr 
-      @ 5, 12+20  say 'Телефон     '+' '+tlfr  
-      @ 6,1  say 'Адрес       '+' '+adrr  
+      @ 4,1  say 'Наим'+' '+nkler
+      @ 5,1  say 'Наим.коротк.'+' '+nklsr
+      @ 5, 12+20  say 'Телефон     '+' '+tlfr
+      @ 6,1  say 'Адрес       '+' '+adrr
    endif
 
    if gnArm=3.or.gnAdm=1
-      @ 7,1  say 'MФО1        ' get kb1r valid mfo1() 
-      @ 8,1  say 'Расч. счет1 ' get ns1r   
-      @ 8,col()+1  say 'Счет НДС1' get ns1ndsr   
+      @ 7,1  say 'MФО1        ' get kb1r valid mfo1()
+      @ 8,1  say 'Расч. счет1 ' get ns1r
+      @ 8,col()+1  say 'Счет НДС1' get ns1ndsr
       @ 9,30 say nmfo2r
-      @ 9,1  say 'MФО2        ' get kb2r valid mfo2()   
-      @ 10,1  say 'Расч. счет2 ' get ns2r               
-      @ 10,col()+1  say 'Счет НДС2' get ns2ndsr         
-      @ 11,1  say 'Налоговый N ' get nnr pict '999999999999'   
-      @ 12,1 say 'Номер свидет' get nsvr                       
+      @ 9,1  say 'MФО2        ' get kb2r valid mfo2()
+      @ 10,1  say 'Расч. счет2 ' get ns2r
+      @ 10,col()+1  say 'Счет НДС2' get ns2ndsr
+      @ 11,1  say 'Налоговый N ' get nnr pict '999999999999'
+      @ 12,1 say 'Номер свидет' get nsvr
    else
-      @ 7,1  say 'MФО1        '+' '+kb1r 
-      @ 8,1  say 'Расч. счет1 '+' '+ns1r   
-      @ 8,col()+1  say 'Счет НДС1'+' '+ns1ndsr   
+      @ 7,1  say 'MФО1        '+' '+kb1r
+      @ 8,1  say 'Расч. счет1 '+' '+ns1r
+      @ 8,col()+1  say 'Счет НДС1'+' '+ns1ndsr
       @ 9,30 say nmfo2r
-      @ 9,1  say 'MФО2        '+' '+kb2r   
-      @ 10,1  say 'Расч. счет2 '+' '+ns2r               
-      @ 10,col()+1  say 'Счет НДС2'+' '+ns2ndsr         
-      @ 11,1  say 'Налоговый N '+' '+str(nnr,12)   
-      @ 12,1 say 'Номер свидет'+' '+nsvr                       
+      @ 9,1  say 'MФО2        '+' '+kb2r
+      @ 10,1  say 'Расч. счет2 '+' '+ns2r
+      @ 10,col()+1  say 'Счет НДС2'+' '+ns2ndsr
+      @ 11,1  say 'Налоговый N '+' '+str(nnr,12)
+      @ 12,1 say 'Номер свидет'+' '+nsvr
    endif
-   if dkklnr=1.or.gnAdm=1  
-      @ 14,1 say 'Тип предпр. ' get opfhr  pict '9999' valid opfh()   
+   if dkklnr=1.or.gnAdm=1
+      @ 14,1 say 'Тип предпр. ' get opfhr  pict '9999' valid opfh()
    else
-      @ 14,1 say 'Тип предпр. '    
+      @ 14,1 say 'Тип предпр. '
    endif
    @ 14,19 say nopfhr PICT REPLICATE("X",20)
    @ 15,19 say ngosr
-   if dkklnr=1.or.gnAdm=1  
-      @ 15,1 say 'Государство ' get kgosr  pict '9999' valid kgos()   
+   if dkklnr=1.or.gnAdm=1
+      @ 15,1 say 'Государство ' get kgosr  pict '9999' valid kgos()
    endif
    @ 16,19 say noblr
-   if dkklnr=1.or.gnAdm=1  
-      @ 16,1 say 'Область     ' get koblr  pict '9999' valid kobl()    
+   if dkklnr=1.or.gnAdm=1
+      @ 16,1 say 'Область     ' get koblr  pict '9999' valid kobl()
    endif
    @ 17,19 say nrnr
-   if dkklnr=1.or.gnAdm=1  
-      @ 17,1 say 'Район       ' get krnr   pict '9999' valid krn()     
+   if dkklnr=1.or.gnAdm=1
+      @ 17,1 say 'Район       ' get krnr   pict '9999' valid krn()
    endif
    @ 18,19 say nnaspr
-   if dkklnr=1.or.gnAdm=1  
-      @ 18,1 say 'Нас.пункт   ' get knaspr pict '9999' valid knasp()   
+   if dkklnr=1.or.gnAdm=1
+      @ 18,1 say 'Нас.пункт   ' get knaspr pict '9999' valid knasp()
    endif
    @ 19,19 say nulcr
-   if dkklnr=1.or.gnAdm=1  
-      @ 19,1 say 'Улица       ' get kulcr  pict '9999' valid kulc()    
+   if dkklnr=1.or.gnAdm=1
+      @ 19,1 say 'Улица       ' get kulcr  pict '9999' valid kulc()
    endif
-   if dkklnr=1.or.gnAdm=1  
+   if dkklnr=1.or.gnAdm=1
+      @ 20,1 say 'E-mail      ' get EMailr pict '@S26'
+   endif
+
+
+   if dkklnr=1.or.gnAdm=1
       read
    else
-      inkey(0)  
+      inkey(0)
    endif
+
    nklr=upper(nklr)
    nklsr=lower(nklsr)
    if lastkey()=27
       exit
    endif
-   if dkklnr=1.or.gnAdm=1  
+   if dkklnr=1.or.gnAdm=1
       @ MAXROW()-1,60 prom 'Верно'
       @ MAXROW()-1,col()+1 prom 'Не верно'
       menu to vn
@@ -361,27 +380,29 @@ do while .t.
       nklr=alltrim(nsopfhr)+' '+nkler
    else
       nklr=nkler
-   endif 
+   endif
    if vn=1
       sele kln
       if corr=1
-         netrepl('pri,nkle,kklp,kkl1,nkl,nkls,adr,tlf,kb1,kb2,ns1,ns2,nn,nsv,rst,kgos,kobl,krn,knasp,kulc,kfs,opfh','prir,nkler,kklpr,kkl1r,nklr,nklsr,adrr,tlfr,kb1r,kb2r,ns1r,ns2r,nnr,nsvr,rstr,kgosr,koblr,krnr,knaspr,kulcr,kfsr,opfhr')
+         netrepl('EMail,pri,nkle,kklp,kkl1,nkl,nkls,adr,tlf,kb1,kb2,ns1,ns2,nn,nsv,rst,kgos,kobl,krn,knasp,kulc,kfs,opfh',;
+         'EMailr,prir,nkler,kklpr,kkl1r,nklr,nklsr,adrr,tlfr,kb1r,kb2r,ns1r,ns2r,nnr,nsvr,rstr,kgosr,koblr,krnr,knaspr,kulcr,kfsr,opfhr')
       endif
       if corr=0
-         if !netseek('t1','kklr')       
+         if !netseek('t1','kklr')
             netadd()
-            netrepl('nkle,kklp,kkl,kkl1,nkl,nkls,adr,tlf,kb1,kb2,ns1,ns2,nn,nsv,rst,kgos,kobl,krn,knasp,kulc,kfs,opfh,kto','nkler,kklpr,kklr,kkl1r,nklr,nklsr,adrr,tlfr,kb1r,kb2r,ns1r,ns2r,nnr,nsvr,rstr,kgosr,koblr,krnr,knaspr,kulcr,kfsr,opfhr,gnKto')
-         endif 
+            netrepl('EMail,nkle,kklp,kkl,kkl1,nkl,nkls,adr,tlf,kb1,kb2,ns1,ns2,nn,nsv,rst,kgos,kobl,krn,knasp,kulc,kfs,opfh,kto',;
+            'EMailr,nkler,kklpr,kklr,kkl1r,nklr,nklsr,adrr,tlfr,kb1r,kb2r,ns1r,ns2r,nnr,nsvr,rstr,kgosr,koblr,krnr,knaspr,kulcr,kfsr,opfhr,gnKto')
+         endif
       endif
-      if kkl#kklp    
-         netrepl('kkl1','0')  
-      endif  
+      if kkl#kklp
+         netrepl('kkl1','0')
+      endif
       exit
    endif
    sele kln
 endd
-setcolor(clklnins)
-rest scre from scklnins
+setcolor(clKlnIns)
+rest scre from scKlnIns
 
 stat func mfo1()
 save scre to scmfo
@@ -975,11 +996,11 @@ if knaspr=0.or.!netseek('t1','knaspr')
               exit
          case lastkey()=22
               naspins()
-         case lastkey()=7.and.(gnAdm=1.or.gnKto=160.or.gnKto=848) 
-              netdel()  
+         case lastkey()=7.and.(gnAdm=1.or.gnKto=160.or.gnKto=848)
+              netdel()
               skip -1
               if bof()
-                 go top 
+                 go top
               endif
          case lastkey()=-3
               naspins(1)
@@ -1067,7 +1088,7 @@ if kulcr=0.or.!netseek('t1','kulcr')
          case lastkey()=22
               ulcins()
          case lastkey()=7
-              netdel() 
+              netdel()
               skip -1
          case lastkey()=-3
               ulcins(1)
@@ -1182,7 +1203,7 @@ if krnr#0
    whlr='krn=krnr'
    if !netseek('t2','krnr')
       krnr=0
-      go top  
+      go top
       whlr='.t.'
    endif
 else
